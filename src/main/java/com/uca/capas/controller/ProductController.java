@@ -34,15 +34,24 @@ public class ProductController {
 	
 	@PostMapping("validar")
 	@ResponseBody
-	public String validar(Product product) {
+	public ModelAndView validar(Product product) {
+		
+		ModelAndView mav = new ModelAndView();
+		
 		int limite = productos.get(product.getId()).getCantidad();
 		int solicitado = product.getCantidad();
 		
-		if(solicitado > limite) {
-			return "Se han solicitado mas items de los que se encuentran disponibles." +"<br>" +"El inventario cuenta solo con " + limite+ " elementos del item " + productos.get(product.getId()).getNombre()+ " :C";
+		if(solicitado <= limite) {
+			
+			mav.setViewName("compra");
+			mav.addObject("msg", "El producto "+ productos.get(product.getId()).getNombre() + " fue adquirido con exito :D");
+			return mav;
+
 		}
 		
-		return "Solicitud procesada con exito :D";
+		mav.setViewName("error");
+		mav.addObject("error","Se han solicitado mas items de los que se encuentran disponibles.\nEl inventario cuenta solo con " + limite+ " elementos del item " + productos.get(product.getId()).getNombre()+ " :C");
+		return mav;
 		
 		//return productos.get(product.getId()).getNombre() + "\n" + productos.get(product.getId()).getCantidad();
 	}
